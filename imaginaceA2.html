@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trénink imaginace – ústní zkouška A2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#f5f0e8;
+    --card:#ffffff;
+    --header:#2d1f24;
+    --pink:#e8457a;
+    --pink-soft:#fdf0f4;
+    --muted:#888880;
+    --green:#2d8a60;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background:var(--cream);
+    color:var(--header);
+    min-height:100vh;
+  }
+  header{
+    background:var(--header);
+    color:#fff;
+    padding:22px 20px;
+    text-align:center;
+  }
+  header h1{
+    margin:0;
+    font-size:1.3rem;
+    font-weight:700;
+  }
+  header p{
+    margin:6px 0 0;
+    font-size:0.85rem;
+    color:#cbb;
+    opacity:0.75;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:24px 16px 60px;
+  }
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:18px;
+    box-shadow:0 2px 10px rgba(45,31,36,0.06);
+  }
+  .instruction{
+    background:var(--pink-soft);
+    border-left:4px solid var(--pink);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:18px;
+    font-size:0.98rem;
+    line-height:1.5;
+  }
+  .instruction strong{color:var(--pink);}
+  h2{font-size:1.15rem;margin:0 0 12px;}
+  .sets-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  @media (max-width:480px){ .sets-grid{grid-template-columns:1fr;} }
+  .set-btn{
+    background:var(--card);
+    border:2px solid var(--pink-soft);
+    border-radius:14px;
+    padding:14px 12px;
+    text-align:left;
+    cursor:pointer;
+    transition:border-color .15s ease, transform .1s ease;
+    font-family:inherit;
+  }
+  .set-btn:hover{border-color:var(--pink);transform:translateY(-1px);}
+  .set-btn .title{font-weight:600;font-size:0.95rem;}
+  .btn{
+    background:var(--pink);
+    color:#fff;
+    border:none;
+    border-radius:999px;
+    padding:12px 26px;
+    font-size:1rem;
+    font-weight:600;
+    font-family:inherit;
+    cursor:pointer;
+    transition:opacity .15s ease;
+  }
+  .btn:hover{opacity:0.9;}
+  .btn.secondary{
+    background:transparent;
+    color:var(--pink);
+    border:2px solid var(--pink);
+  }
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px;}
+  .center{text-align:center;}
+  .random-btn-wrap{text-align:center;margin-top:16px;}
+  .settings{
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:16px;
+    font-size:0.9rem;
+    color:var(--muted);
+  }
+  .settings label{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .settings input{
+    width:70px;
+    padding:6px 8px;
+    border-radius:8px;
+    border:1px solid #ddd;
+    font-family:inherit;
+    text-align:center;
+    font-size:0.95rem;
+  }
+  .situations{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:18px;
+  }
+  @media (max-width:480px){ .situations{grid-template-columns:1fr;} }
+  .situation-card{
+    background:var(--card);
+    border:2px solid var(--pink-soft);
+    border-radius:14px;
+    padding:16px 8px;
+    text-align:center;
+    position:relative;
+  }
+  .situation-card.used{border-color:var(--green);}
+  .chip{
+    display:inline-block;
+    background:var(--pink-soft);
+    border:1px solid var(--pink);
+    color:var(--header);
+    border-radius:999px;
+    padding:3px 12px;
+    font-size:0.82rem;
+    font-weight:500;
+  }
+  .situation-card .check{
+    margin-top:10px;
+  }
+  .situation-card .check label{
+    font-size:0.78rem;
+    color:var(--muted);
+    display:flex;
+    align-items:center;
+    gap:5px;
+    justify-content:center;
+    cursor:pointer;
+  }
+  .checklist-plain{
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+  .checklist-plain li{
+    padding:6px 0;
+    font-size:0.95rem;
+    border-bottom:1px solid var(--pink-soft);
+  }
+  .checklist-plain li:last-child{border-bottom:none;}
+  .timer-wrap{
+    text-align:center;
+    margin:6px 0 20px;
+  }
+  .timer-circle{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    border:6px solid var(--pink-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 8px;
+    font-size:2rem;
+    font-weight:700;
+    color:var(--pink);
+    transition:border-color .3s ease, color .3s ease;
+  }
+  .timer-circle.low{border-color:#e0433f;color:#e0433f;}
+  .timer-label{color:var(--muted);font-size:0.85rem;}
+  details.hint{
+    background:var(--pink-soft);
+    border:1px solid var(--pink);
+    border-radius:12px;
+    padding:10px 14px;
+    margin-bottom:18px;
+  }
+  details.hint summary{
+    cursor:pointer;
+    font-weight:600;
+    color:var(--pink);
+    font-size:0.92rem;
+  }
+  .hint-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+  }
+  .review-list li{margin-bottom:8px;}
+  .hidden{display:none !important;}
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:0.78rem;
+    padding:20px;
+  }
+  .set-btn .thumbs{display:flex;gap:4px;margin-bottom:8px;}
+  .set-btn .thumbs img{width:33.3%;height:42px;object-fit:cover;border-radius:6px;display:block;}
+  .situation-card img{
+    width:100%;
+    height:110px;
+    object-fit:cover;
+    border-radius:10px;
+    display:block;
+    margin-bottom:8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== APP ===================== -->
+<div id="app">
+  <header>
+    <h1>Trénink imaginace – ústní zkouška A2</h1>
+    <p>@tatiana.sayfutdinova</p>
+  </header>
+
+  <div class="wrap">
+
+    <!-- START SCREEN -->
+    <section id="screen-start">
+      <div class="instruction">
+        Vyberte si sadu obrázků. Nejdřív budete mít <strong>čas na přípravu</strong> (v hlavě si odpovíte na otázky kdo, co, kde, proč a jak se cítili). Potom budete <strong>vyprávět souvislý příběh v minulém čase</strong> a musíte použít <strong>všechny 3 situace</strong>.
+      </div>
+
+      <div class="card">
+        <h2>Sady k procvičování</h2>
+        <div class="sets-grid" id="sets-grid"></div>
+        <div class="random-btn-wrap">
+          <button class="btn secondary" onclick="pickRandomSet()">🎲 Náhodná sada</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size:1rem;">Nastavení času</h2>
+        <div class="settings">
+          <label>Příprava (s)
+            <input type="number" id="prep-seconds" value="60" min="10" max="180" step="10">
+          </label>
+          <label>Mluvení (s)
+            <input type="number" id="speak-seconds" value="60" min="20" max="180" step="10">
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- PREP SCREEN -->
+    <section id="screen-prep" class="hidden">
+      <div class="instruction">
+        Podívejte se na situace. Máte <strong id="prep-total-label"></strong> na přípravu. Odpovězte si v hlavě: <strong>Kdo? Co dělali? Kde? Proč? Jak se cítili?</strong>
+      </div>
+      <div class="situations" id="prep-situations"></div>
+      <div class="timer-wrap">
+        <div class="timer-circle" id="prep-timer">60</div>
+        <div class="timer-label">sekund do začátku vyprávění</div>
+      </div>
+      <div class="card">
+        <ul class="checklist-plain">
+          <li>Kdo?</li>
+          <li>Co dělali?</li>
+          <li>Kde?</li>
+          <li>Proč?</li>
+          <li>Jak se cítili?</li>
+        </ul>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="startSpeak()">Jsem připravena/ý → Mluvit</button>
+      </div>
+    </section>
+
+    <!-- SPEAK SCREEN -->
+    <section id="screen-speak" class="hidden">
+      <div class="instruction">
+        Vyprávějte <strong>souvislý příběh v minulém čase</strong>. Použijte <strong>všechny 3 situace</strong> a spojovací výrazy z nápovědy níže.
+      </div>
+      <div class="situations" id="speak-situations"></div>
+
+      <details class="hint">
+        <summary>💡 Nápověda: spojovací výrazy</summary>
+        <div class="hint-chips">
+          <span class="chip">nejdřív</span>
+          <span class="chip">potom</span>
+          <span class="chip">pak</span>
+          <span class="chip">večer</span>
+          <span class="chip">nakonec</span>
+          <span class="chip">protože</span>
+          <span class="chip">ale</span>
+          <span class="chip">i když</span>
+          <span class="chip">proto</span>
+        </div>
+      </details>
+
+      <div class="timer-wrap">
+        <div class="timer-circle" id="speak-timer">60</div>
+        <div class="timer-label">sekund na vyprávění</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="finishSpeak()">Dokončit</button>
+      </div>
+    </section>
+
+    <!-- REVIEW SCREEN -->
+    <section id="screen-review" class="hidden">
+      <div class="card">
+        <h2>Zkontrolujte se</h2>
+        <ul class="checklist-plain review-list">
+          <li>☐ Použila/a jsem všechny 3 situace?</li>
+          <li>☐ Byl celý příběh v minulém čase?</li>
+          <li>☐ Bylo to souvislé vyprávění (ne jen výčet vět)?</li>
+          <li>☐ Použila/a jsem spojovací výrazy (nejdřív, potom, protože…)?</li>
+          <li>☐ Bylo sloveso "se/si" na správném místě ve větě?</li>
+        </ul>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="retrySameSet()">🔁 Zkusit stejnou sadu znovu</button>
+        <button class="btn secondary" onclick="backToStart()">← Vybrat jinou sadu</button>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>Materiál pro klienty · @tatiana.sayfutdinova · fotky: Unsplash</footer>
+</div>
+
+<script>
+/* ============================================================
+   SADY OBRÁZKŮ / SITUACÍ – snadno doplníte další sadu
+   Obrázky: Unsplash (volně použitelné fotky), url + popisek.
+   ============================================================ */
+const SETS = [
+  {
+    id: 'vylet',
+    title: 'Výlet',
+    instruction: 'Minulý víkend jeli kamarádi na výlet. Podívejte se na situace a řekněte, co dělali. Celý příběh musí být v minulém čase.',
+    situations: [
+      { img: 'https://images.unsplash.com/photo-1666264335108-12af279e68fb?w=500&q=70&auto=format&fit=crop', label: 'nové auto' },
+      { img: 'https://images.unsplash.com/photo-1752981030189-219174cda537?w=500&q=70&auto=format&fit=crop', label: 'hotel v horách' },
+      { img: 'https://images.unsplash.com/photo-1694152490937-96340b5cd798?w=500&q=70&auto=format&fit=crop', label: 'příroda' },
+    ]
+  },
+  {
+    id: 'patek',
+    title: 'Pátek večer',
+    instruction: 'Co dělaly kamarádky minulý víkend? Použijte všechny 3 situace v jednom vyprávění.',
+    situations: [
+      { img: 'https://images.unsplash.com/photo-1631702825172-a9a848c473ad?w=500&q=70&auto=format&fit=crop', label: 'kino' },
+      { img: 'https://images.unsplash.com/photo-1646296586390-723f37ba380a?w=500&q=70&auto=format&fit=crop', label: 'česká restaurace' },
+      { img: 'https://images.unsplash.com/photo-1750224268523-88354f0412f1?w=500&q=70&auto=format&fit=crop', label: 'bar' },
+    ]
+  },
+  {
+    id: 'oslava',
+    title: 'Rodinná oslava',
+    instruction: 'Minulou sobotu byla rodinná oslava. Podívejte se na situace a vyprávějte, co se stalo.',
+    situations: [
+      { img: 'https://images.unsplash.com/photo-1727877033523-7cd49318bb6e?w=500&q=70&auto=format&fit=crop', label: 'narozeninová oslava' },
+      { img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=70&auto=format&fit=crop', label: 'dárky' },
+      { img: 'https://images.unsplash.com/photo-1752650143719-e1a1d94a02b9?w=500&q=70&auto=format&fit=crop', label: 'fotografování' },
+    ]
+  },
+  {
+    id: 'more',
+    title: 'Dovolená u moře',
+    instruction: 'Minulé léto byla kamarádka na dovolené. Popište, co dělala.',
+    situations: [
+      { img: 'https://images.unsplash.com/photo-1747560249218-387bf151ad45?w=500&q=70&auto=format&fit=crop', label: 'let letadlem' },
+      { img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=70&auto=format&fit=crop', label: 'pláž' },
+      { img: 'https://images.unsplash.com/photo-1752610877644-c83e616d9fd3?w=500&q=70&auto=format&fit=crop', label: 'večeře u moře' },
+    ]
+  },
+  {
+    id: 'stehovani',
+    title: 'Stěhování',
+    instruction: 'Minulý měsíc se kamarád stěhoval. Řekněte, co dělal.',
+    situations: [
+      { img: 'https://images.unsplash.com/photo-1758523671826-d7f8217ffac3?w=500&q=70&auto=format&fit=crop', label: 'stěhovací krabice' },
+      { img: 'https://images.unsplash.com/photo-1722859179261-dd72877cb7c3?w=500&q=70&auto=format&fit=crop', label: 'nový byt' },
+      { img: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=500&q=70&auto=format&fit=crop', label: 'uspořádání nábytku' },
+    ]
+  },
+];
+
+/* ============================================================
+   STAV A LOGIKA APLIKACE
+   ============================================================ */
+let currentSet = null;
+let prepTimeLeft = 60;
+let speakTimeLeft = 60;
+let prepInterval = null;
+let speakInterval = null;
+let audioCtx = null;
+
+function beep(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = 880;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.35);
+  }catch(e){ /* audio not available, ignore */ }
+}
+
+function renderSetsGrid(){
+  const grid = document.getElementById('sets-grid');
+  grid.innerHTML = '';
+  SETS.forEach(set => {
+    const btn = document.createElement('button');
+    btn.className = 'set-btn';
+    btn.onclick = () => selectSet(set);
+    btn.innerHTML = `
+      <div class="thumbs">${set.situations.map(s => `<img src="${s.img}" alt="${s.label}" loading="lazy">`).join('')}</div>
+      <div class="title">${set.title}</div>
+    `;
+    grid.appendChild(btn);
+  });
+}
+
+function pickRandomSet(){
+  const set = SETS[Math.floor(Math.random() * SETS.length)];
+  selectSet(set);
+}
+
+function showScreen(id){
+  ['screen-start','screen-prep','screen-speak','screen-review'].forEach(s => {
+    document.getElementById(s).classList.toggle('hidden', s !== id);
+  });
+}
+
+function renderSituations(containerId, withChecks){
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  currentSet.situations.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'situation-card';
+    card.id = containerId + '-card-' + i;
+    card.innerHTML = `
+      <img src="${s.img}" alt="${s.label}" loading="lazy">
+      <span class="chip">${s.label}</span>
+      ${withChecks ? `
+        <div class="check">
+          <label>
+            <input type="checkbox" onchange="toggleUsed('${containerId}-card-${i}', this.checked)">
+            použil/a jsem
+          </label>
+        </div>` : ''}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function toggleUsed(cardId, checked){
+  document.getElementById(cardId).classList.toggle('used', checked);
+}
+
+function selectSet(set){
+  currentSet = set;
+  document.querySelector('#screen-prep .instruction').innerHTML =
+    `Podívejte se na situace. Máte <strong id="prep-total-label"></strong> na přípravu. Odpovězte si v hlavě: <strong>Kdo? Co dělali? Kde? Proč? Jak se cítili?</strong><br><em>${set.instruction}</em>`;
+  document.querySelector('#screen-speak .instruction').innerHTML =
+    `Vyprávějte <strong>souvislý příběh v minulém čase</strong>. Použijte <strong>všechny 3 situace</strong> a spojovací výrazy z nápovědy níže.<br><em>${set.instruction}</em>`;
+  renderSituations('prep-situations', false);
+  startPrep();
+}
+
+function startPrep(){
+  prepTimeLeft = parseInt(document.getElementById('prep-seconds').value, 10) || 60;
+  document.getElementById('prep-total-label').textContent = prepTimeLeft + ' sekund';
+  document.getElementById('prep-timer').textContent = prepTimeLeft;
+  document.getElementById('prep-timer').classList.remove('low');
+  showScreen('screen-prep');
+  clearInterval(prepInterval);
+  prepInterval = setInterval(() => {
+    prepTimeLeft--;
+    document.getElementById('prep-timer').textContent = prepTimeLeft;
+    if(prepTimeLeft <= 10) document.getElementById('prep-timer').classList.add('low');
+    if(prepTimeLeft <= 0){
+      clearInterval(prepInterval);
+      beep();
+      startSpeak();
+    }
+  }, 1000);
+}
+
+function startSpeak(){
+  clearInterval(prepInterval);
+  speakTimeLeft = parseInt(document.getElementById('speak-seconds').value, 10) || 60;
+  document.getElementById('speak-timer').textContent = speakTimeLeft;
+  document.getElementById('speak-timer').classList.remove('low');
+  renderSituations('speak-situations', true);
+  showScreen('screen-speak');
+  clearInterval(speakInterval);
+  speakInterval = setInterval(() => {
+    speakTimeLeft--;
+    document.getElementById('speak-timer').textContent = speakTimeLeft;
+    if(speakTimeLeft <= 10) document.getElementById('speak-timer').classList.add('low');
+    if(speakTimeLeft <= 0){
+      clearInterval(speakInterval);
+      beep();
+      finishSpeak();
+    }
+  }, 1000);
+}
+
+function finishSpeak(){
+  clearInterval(speakInterval);
+  showScreen('screen-review');
+}
+
+function retrySameSet(){
+  selectSet(currentSet);
+}
+
+function backToStart(){
+  showScreen('screen-start');
+}
+
+renderSetsGrid();
+</script>
+</body>
+</html>
