@@ -189,6 +189,8 @@
     font-weight:700;
     color:var(--pink);
     transition:border-color .3s ease, color .3s ease;
+    cursor:pointer;
+    user-select:none;
   }
   .timer-circle.low{border-color:#e0433f;color:#e0433f;}
   .timer-label{color:var(--muted);font-size:0.85rem;}
@@ -245,7 +247,7 @@
     <!-- START SCREEN -->
     <section id="screen-start">
       <div class="instruction">
-        Vyberte si sadu obrázků. Nejdřív budete mít <strong>čas na přípravu</strong> (v hlavě si odpovíte na otázky kdo, co, kde, proč a jak se cítili). Potom budete <strong>vyprávět souvislý příběh v minulém čase</strong> a musíte použít <strong>všechny 3 situace</strong>.
+        Vyberte si sadu obrázků. Nejdřív budete mít <strong>čas na přípravu</strong> (v hlavě si odpovíte na otázky s kým, co, kde, proč a jak jste se cítila) — čas si spustíte sami klepnutím na časovač. Potom budete <strong>vyprávět souvislý příběh v minulém čase</strong> a musíte použít <strong>všechny 3 situace</strong>.
       </div>
 
       <div class="card">
@@ -272,31 +274,31 @@
     <!-- PREP SCREEN -->
     <section id="screen-prep" class="hidden">
       <div class="instruction">
-        Podívejte se na situace. Máte <strong id="prep-total-label"></strong> na přípravu. Odpovězte si v hlavě: <strong>Kdo? Co dělali? Kde? Proč? Jak se cítili?</strong>
+        Podívejte se na situace. Až budete připravena/í, klepnutím na časovač spustíte <strong id="prep-total-label"></strong> na přípravu. Odpovězte si v hlavě: <strong>S kým? Co jste dělala? Kde? Proč? Jak jste se cítila?</strong>
       </div>
       <div class="situations" id="prep-situations"></div>
       <div class="timer-wrap">
-        <div class="timer-circle" id="prep-timer">60</div>
-        <div class="timer-label">sekund do začátku vyprávění</div>
+        <div class="timer-circle" id="prep-timer" onclick="beginPrepCountdown()">▶</div>
+        <div class="timer-label" id="prep-timer-label">Klepnutím spustíte odpočet</div>
       </div>
       <div class="card">
         <ul class="checklist-plain">
-          <li>Kdo?</li>
-          <li>Co dělali?</li>
+          <li>S kým?</li>
+          <li>Co jste dělala?</li>
           <li>Kde?</li>
           <li>Proč?</li>
-          <li>Jak se cítili?</li>
+          <li>Jak jste se cítila?</li>
         </ul>
       </div>
       <div class="btn-row">
-        <button class="btn" onclick="startSpeak()">Jsem připravena/ý → Mluvit</button>
+        <button class="btn" onclick="goToSpeak()">Jsem připravena/ý → Mluvit</button>
       </div>
     </section>
 
     <!-- SPEAK SCREEN -->
     <section id="screen-speak" class="hidden">
       <div class="instruction">
-        Vyprávějte <strong>souvislý příběh v minulém čase</strong>. Použijte <strong>všechny 3 situace</strong> a spojovací výrazy z nápovědy níže.
+        Až budete připravena/í, klepnutím na časovač spustíte vyprávění. Vyprávějte <strong>souvislý příběh v minulém čase</strong>. Použijte <strong>všechny 3 situace</strong> a spojovací výrazy z nápovědy níže.
       </div>
       <div class="situations" id="speak-situations"></div>
 
@@ -310,14 +312,14 @@
           <span class="chip">nakonec</span>
           <span class="chip">protože</span>
           <span class="chip">ale</span>
-          <span class="chip">i když</span>
+          <span class="chip">taky</span>
           <span class="chip">proto</span>
         </div>
       </details>
 
       <div class="timer-wrap">
-        <div class="timer-circle" id="speak-timer">60</div>
-        <div class="timer-label">sekund na vyprávění</div>
+        <div class="timer-circle" id="speak-timer" onclick="beginSpeakCountdown()">▶</div>
+        <div class="timer-label" id="speak-timer-label">Klepnutím spustíte odpočet</div>
       </div>
       <div class="btn-row">
         <button class="btn" onclick="finishSpeak()">Dokončit</button>
@@ -352,13 +354,16 @@
    SADY OBRÁZKŮ / SITUACÍ – snadno doplníte další sadu
    Obrázky: Unsplash (volně použitelné fotky), url + popisek.
    ============================================================ */
+/* Poznámka: instrukce jsou v ženském rodě (jste byla / dělala), protože jsou
+   napsané pro konkrétní klientku. Pro klienta-muže stačí -a na konci
+   příslušných sloves přepsat na tvar bez -a (byl / dělal). */
 const SETS = [
   {
     id: 'vylet',
     title: 'Výlet',
-    instruction: 'Minulý víkend jeli kamarádi na výlet. Podívejte se na situace a řekněte, co dělali. Celý příběh musí být v minulém čase.',
+    instruction: 'Minulý víkend jste byla s kamarádem na výletě. Podívejte se na situace a řekněte, co jste dělali. Celý příběh musí být v minulém čase.',
     situations: [
-      { img: 'https://images.unsplash.com/photo-1666264335108-12af279e68fb?w=500&q=70&auto=format&fit=crop', label: 'nové auto' },
+      { img: 'https://images.unsplash.com/photo-1666264335108-12af279e68fb?w=500&q=70&auto=format&fit=crop', label: 'auto' },
       { img: 'https://images.unsplash.com/photo-1752981030189-219174cda537?w=500&q=70&auto=format&fit=crop', label: 'hotel v horách' },
       { img: 'https://images.unsplash.com/photo-1694152490937-96340b5cd798?w=500&q=70&auto=format&fit=crop', label: 'příroda' },
     ]
@@ -366,29 +371,29 @@ const SETS = [
   {
     id: 'patek',
     title: 'Pátek večer',
-    instruction: 'Co dělaly kamarádky minulý víkend? Použijte všechny 3 situace v jednom vyprávění.',
+    instruction: 'Co jste dělala minulý pátek večer s kamarádkami? Použijte všechny 3 situace v jednom vyprávění.',
     situations: [
       { img: 'https://images.unsplash.com/photo-1631702825172-a9a848c473ad?w=500&q=70&auto=format&fit=crop', label: 'kino' },
-      { img: 'https://images.unsplash.com/photo-1646296586390-723f37ba380a?w=500&q=70&auto=format&fit=crop', label: 'česká restaurace' },
+      { img: 'https://images.unsplash.com/photo-1646296586390-723f37ba380a?w=500&q=70&auto=format&fit=crop', label: 'restaurace' },
       { img: 'https://images.unsplash.com/photo-1750224268523-88354f0412f1?w=500&q=70&auto=format&fit=crop', label: 'bar' },
     ]
   },
   {
     id: 'oslava',
     title: 'Rodinná oslava',
-    instruction: 'Minulou sobotu byla rodinná oslava. Podívejte se na situace a vyprávějte, co se stalo.',
+    instruction: 'Minulou sobotu jste měla rodinnou oslavu. Podívejte se na situace a vyprávějte, co se stalo.',
     situations: [
-      { img: 'https://images.unsplash.com/photo-1727877033523-7cd49318bb6e?w=500&q=70&auto=format&fit=crop', label: 'narozeninová oslava' },
+      { img: 'https://images.unsplash.com/photo-1727877033523-7cd49318bb6e?w=500&q=70&auto=format&fit=crop', label: 'narozeniny' },
       { img: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=500&q=70&auto=format&fit=crop', label: 'dárky' },
-      { img: 'https://images.unsplash.com/photo-1752650143719-e1a1d94a02b9?w=500&q=70&auto=format&fit=crop', label: 'fotografování' },
+      { img: 'https://images.unsplash.com/photo-1752650143719-e1a1d94a02b9?w=500&q=70&auto=format&fit=crop', label: 'fotka' },
     ]
   },
   {
     id: 'more',
     title: 'Dovolená u moře',
-    instruction: 'Minulé léto byla kamarádka na dovolené. Popište, co dělala.',
+    instruction: 'Minulé léto jste byla na dovolené u moře. Popište, co jste dělala.',
     situations: [
-      { img: 'https://images.unsplash.com/photo-1747560249218-387bf151ad45?w=500&q=70&auto=format&fit=crop', label: 'let letadlem' },
+      { img: 'https://images.unsplash.com/photo-1747560249218-387bf151ad45?w=500&q=70&auto=format&fit=crop', label: 'letadlo' },
       { img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=70&auto=format&fit=crop', label: 'pláž' },
       { img: 'https://images.unsplash.com/photo-1752610877644-c83e616d9fd3?w=500&q=70&auto=format&fit=crop', label: 'večeře u moře' },
     ]
@@ -396,11 +401,21 @@ const SETS = [
   {
     id: 'stehovani',
     title: 'Stěhování',
-    instruction: 'Minulý měsíc se kamarád stěhoval. Řekněte, co dělal.',
+    instruction: 'Minulý měsíc jste se stěhovala. Řekněte, co jste dělala.',
     situations: [
-      { img: 'https://images.unsplash.com/photo-1758523671826-d7f8217ffac3?w=500&q=70&auto=format&fit=crop', label: 'stěhovací krabice' },
+      { img: 'https://images.unsplash.com/photo-1758523671826-d7f8217ffac3?w=500&q=70&auto=format&fit=crop', label: 'krabice' },
       { img: 'https://images.unsplash.com/photo-1722859179261-dd72877cb7c3?w=500&q=70&auto=format&fit=crop', label: 'nový byt' },
-      { img: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=500&q=70&auto=format&fit=crop', label: 'uspořádání nábytku' },
+      { img: 'https://images.unsplash.com/photo-1638284457192-27d3d0ec51aa?w=500&q=70&auto=format&fit=crop', label: 'nábytek' },
+    ]
+  },
+  {
+    id: 'nakupy',
+    title: 'Nákupy',
+    instruction: 'Minulou sobotu jste byla nakupovat ve městě. Podívejte se na situace a řekněte, co jste dělala.',
+    situations: [
+      { img: 'https://images.unsplash.com/photo-1758520387706-791858e84944?w=500&q=70&auto=format&fit=crop', label: 'obchod' },
+      { img: 'https://images.unsplash.com/photo-1753161027818-28b1f73a8fdf?w=500&q=70&auto=format&fit=crop', label: 'oblečení' },
+      { img: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=500&q=70&auto=format&fit=crop', label: 'kavárna' },
     ]
   },
 ];
@@ -413,6 +428,8 @@ let prepTimeLeft = 60;
 let speakTimeLeft = 60;
 let prepInterval = null;
 let speakInterval = null;
+let prepStarted = false;
+let speakStarted = false;
 let audioCtx = null;
 
 function beep(){
@@ -484,19 +501,30 @@ function toggleUsed(cardId, checked){
 function selectSet(set){
   currentSet = set;
   document.querySelector('#screen-prep .instruction').innerHTML =
-    `Podívejte se na situace. Máte <strong id="prep-total-label"></strong> na přípravu. Odpovězte si v hlavě: <strong>Kdo? Co dělali? Kde? Proč? Jak se cítili?</strong><br><em>${set.instruction}</em>`;
+    `Podívejte se na situace. Až budete připravena/í, klepnutím na časovač spustíte <strong id="prep-total-label"></strong> na přípravu. Odpovězte si v hlavě: <strong>S kým? Co jste dělala? Kde? Proč? Jak jste se cítila?</strong><br><em>${set.instruction}</em>`;
   document.querySelector('#screen-speak .instruction').innerHTML =
-    `Vyprávějte <strong>souvislý příběh v minulém čase</strong>. Použijte <strong>všechny 3 situace</strong> a spojovací výrazy z nápovědy níže.<br><em>${set.instruction}</em>`;
+    `Až budete připravena/í, klepnutím na časovač spustíte vyprávění. Vyprávějte <strong>souvislý příběh v minulém čase</strong>. Použijte <strong>všechny 3 situace</strong> a spojovací výrazy z nápovědy níže.<br><em>${set.instruction}</em>`;
   renderSituations('prep-situations', false);
-  startPrep();
+  resetPrepTimerDisplay();
+  showScreen('screen-prep');
 }
 
-function startPrep(){
+function resetPrepTimerDisplay(){
+  clearInterval(prepInterval);
+  prepStarted = false;
   prepTimeLeft = parseInt(document.getElementById('prep-seconds').value, 10) || 60;
   document.getElementById('prep-total-label').textContent = prepTimeLeft + ' sekund';
+  const circle = document.getElementById('prep-timer');
+  circle.textContent = '▶';
+  circle.classList.remove('low');
+  document.getElementById('prep-timer-label').textContent = 'Klepnutím spustíte odpočet';
+}
+
+function beginPrepCountdown(){
+  if(prepStarted) return;
+  prepStarted = true;
+  document.getElementById('prep-timer-label').textContent = 'sekund do začátku vyprávění';
   document.getElementById('prep-timer').textContent = prepTimeLeft;
-  document.getElementById('prep-timer').classList.remove('low');
-  showScreen('screen-prep');
   clearInterval(prepInterval);
   prepInterval = setInterval(() => {
     prepTimeLeft--;
@@ -505,18 +533,33 @@ function startPrep(){
     if(prepTimeLeft <= 0){
       clearInterval(prepInterval);
       beep();
-      startSpeak();
+      goToSpeak();
     }
   }, 1000);
 }
 
-function startSpeak(){
+function goToSpeak(){
   clearInterval(prepInterval);
-  speakTimeLeft = parseInt(document.getElementById('speak-seconds').value, 10) || 60;
-  document.getElementById('speak-timer').textContent = speakTimeLeft;
-  document.getElementById('speak-timer').classList.remove('low');
   renderSituations('speak-situations', true);
+  resetSpeakTimerDisplay();
   showScreen('screen-speak');
+}
+
+function resetSpeakTimerDisplay(){
+  clearInterval(speakInterval);
+  speakStarted = false;
+  speakTimeLeft = parseInt(document.getElementById('speak-seconds').value, 10) || 60;
+  const circle = document.getElementById('speak-timer');
+  circle.textContent = '▶';
+  circle.classList.remove('low');
+  document.getElementById('speak-timer-label').textContent = 'Klepnutím spustíte odpočet';
+}
+
+function beginSpeakCountdown(){
+  if(speakStarted) return;
+  speakStarted = true;
+  document.getElementById('speak-timer-label').textContent = 'sekund na vyprávění';
+  document.getElementById('speak-timer').textContent = speakTimeLeft;
   clearInterval(speakInterval);
   speakInterval = setInterval(() => {
     speakTimeLeft--;
@@ -540,6 +583,8 @@ function retrySameSet(){
 }
 
 function backToStart(){
+  clearInterval(prepInterval);
+  clearInterval(speakInterval);
   showScreen('screen-start');
 }
 
